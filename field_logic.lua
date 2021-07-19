@@ -17,24 +17,26 @@ end
 
 function spawn_tile(field, nums)
     -- spawns a tile (or multiple) at a random empty location
-    local number = 0
-    local nums = nums or 1
+    if check_space(field) then
+        local number = 0
+        local nums = nums or 1
 
-    for i = 1, nums do
-        if love.math.random(1, 10) == 10 then
-            number = 4
-        else
-            number = 2
+        for i = 1, nums do
+            if love.math.random(1, 10) == 10 then
+                number = 4
+            else
+                number = 2
+            end
+
+            while true do
+                x_rand = love.math.random(1, #field[1])
+                y_rand = love.math.random(1, #field)
+
+                if field[y_rand][x_rand] == 0 then break end
+            end
+
+            field[y_rand][x_rand] = number
         end
-
-        while true do
-            x_rand = love.math.random(1, #field[1])
-            y_rand = love.math.random(1, #field)
-
-            if field[y_rand][x_rand] == 0 then break end
-        end
-
-        field[y_rand][x_rand] = number
     end
 end
 
@@ -82,34 +84,83 @@ function move_field(field, direction)
     print_field(field)
 end
 
-function can_move_up(field, x, y)
-    if y > 1 then
-        if field[y-1][x] == 0 then
-            return true
+function can_move(field, x, y, direction)
+    if direction == "up" then
+        if y > 1 then
+            if field[y-1][x] == 0 then
+                return true
+            end
         end
-    end
 
-    return false
+        return false
+    elseif direction == "down" then
+        if y < #field then
+            if field[y+1][x] == 0 then
+                return true
+            end
+        end
+
+        return false
+
+    elseif direction == "left" then
+        if x > 1 then
+            if field[y][x-1] == 0 then
+                return true
+            end
+        end
+
+        return false
+
+    elseif direction == "right" then
+        if x < #field[1] then
+            if field[y][x+1] == 0 then
+                return true
+            end
+        end
+
+        return false
+    end
 end
 
 
 function move_up(field)
     local moved = true
-    print("trying to move")
+    if debug then print("trying to move") end
     while moved do
         moved = false
 
         for y=1, #field do
             for x=1, #field[1] do
-                if can_move_up(field, x, y) and field[y][x] ~= 0 then
+                if can_move(field, x, y, "up") and field[y][x] ~= 0 then
                     moved = true
                     field[y-1][x] = field[y][x]
                     field[y][x] = 0
                 end
             end
         end
-        print(moved)
+        if debug then print(moved) end
     end
 
-    print_field(field)
+    if debug then print_field(field) end
+end
+
+function move_down(field)
+    local moved = true
+    if debug then print("trying to move") end
+    while moved do
+        moved = false
+
+        for y=1, #field do
+            for x=1, #field[1] do
+                if can_move(field, x, y, "down") and field[y][x] ~= 0 then
+                    moved = true
+                    field[y+1][x] = field[y][x]
+                    field[y][x] = 0
+                end
+            end
+        end
+        if debug then print(moved) end
+    end
+
+    if debug then print_field(field) end
 end
