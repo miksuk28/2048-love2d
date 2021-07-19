@@ -84,7 +84,7 @@ end
 
 function can_move_up(field, x, y)
     if y > 1 then
-        if field[y+1][x] == 0 then
+        if field[y-1][x] == 0 then
             return true
         end
     end
@@ -93,23 +93,23 @@ function can_move_up(field, x, y)
 end
 
 
-function move_up(field, x, y)
-    local moves = 0
-    for y=y, 1, -1 do
-        if field[y][x] == 0 then
-            moves = moves + 1
-        else
-            break
+function move_up(field)
+    local moved = true
+    print("trying to move")
+    while moved do
+        moved = false
+
+        for y=1, #field do
+            for x=1, #field[1] do
+                if can_move_up(field, x, y) and field[y][x] ~= 0 then
+                    moved = true
+                    field[y-1][x] = field[y][x]
+                    field[y][x] = 0
+                end
+            end
         end
+        print(moved)
     end
 
-    print(moves)
-
-    if moves ~= 0 then
-        field[y-moves][x] = field[y][x]
-        field[y][x] = 0
-        return true
-    else
-        return false
-    end
+    print_field(field)
 end

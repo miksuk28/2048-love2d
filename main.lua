@@ -18,5 +18,6 @@ end
 function love.keypressed(k)
     if k == "escape" then love.event.quit() end
 
-    if k == "w" then move_field(field, "up") end
+    if k == "w" then move_up(field) end
+    if k == "s" then spawn_tile(field); print_field(field) end
 end
